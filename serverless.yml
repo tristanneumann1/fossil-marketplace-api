@@ -1,41 +1,32 @@
 service: fossil-marketplace
 app: fossil-marketplace
+plugins:
+  - serverless-offline
 
 provider:
   name: aws
-  runtime: python3.8
+  runtime: nodejs12.x
+  versionFunctions: false
   stage: dev
   region: us-east-1
 
-# you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:ListBucket"
-#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:PutObject"
-#      Resource:
-#        Fn::Join:
-#          - ""
-#          - - "arn:aws:s3:::"
-#            - "Ref" : "ServerlessDeploymentBucket"
-#            - "/*"
-
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
-
-# you can add packaging information here
-#package:
-#  include:
-#    - include-me.py
-#    - include-me-dir/**
-#  exclude:
-#    - exclude-me.py
-#    - exclude-me-dir/**
+cors-config: &cors-config
+  origin: '*'
+  headers:
+    - Content-Type
+    - Authorization
+    - X-Amz-Date
+    - X-Amz-Security-Token
+    - X-Amz-User-Agent
+    - X-Api-Key
 
 functions:
   hello:
-    handler: handler.hello
+    handler: hello.helloWorld
+    events:
+      - http:
+          path: hello-world
+          method: GET
+          cors:
+            <<: *cors-config
+          environment:
