@@ -1,8 +1,7 @@
+const {httpHandler} = require('./lib/handler');
+
 async function helloWorld() {
-  return {
-    statusCode: 200,
-    body: 'Hello World',
-  };
+  return 'Hello World';
 }
 
-module.exports = { helloWorld };
+module.exports = { helloWorld: httpHandler(helloWorld) };
