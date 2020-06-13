@@ -23,11 +23,17 @@ cors-config: &cors-config
 functions:
   hello:
     handler: hello.helloWorld
-    environment:
-      NODE_ENV: ${self:provider.stage}
     events:
       - http:
           path: hello-world
           method: GET
+          cors:
+            <<: *cors-config
+  CreateAccount:
+    handler: controllers/account.createAccount
+    events:
+      - http:
+          path: create-account
+          method: POST
           cors:
             <<: *cors-config

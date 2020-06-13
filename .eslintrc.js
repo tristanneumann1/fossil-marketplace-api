@@ -80,7 +80,6 @@ module.exports = {
     'no-lonely-if': 'error',
     'no-mixed-operators': 'error',
     'no-nested-ternary': 'error',
-    'no-plusplus': 'error',
     'no-tabs': 'error',
     'arrow-parens': ['error', 'always'],
     'arrow-spacing': ['error', { 'before': true, 'after': true }],
