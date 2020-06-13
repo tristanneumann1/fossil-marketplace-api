@@ -20,6 +20,7 @@ provider:
         - "dynamodb:BatchGetItem"
         - "dynamodb:BatchWriteItem"
         - "dynamodb:Query"
+        - "dynamodb:Scan"
       Resource:
         - Fn::GetAtt: [EventStore, Arn]
         - Fn::Join:
@@ -46,7 +47,6 @@ resources:
         Type: AWS::DynamoDB::Table
         Properties:
           TableName: ${self:custom.eventStoreTableName}
-          BillingMode: PAY_PER_REQUEST
           ProvisionedThroughput:
             ReadCapacityUnits: 1
             WriteCapacityUnits: 1

@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "A marketplace for your animal crossing fossils",
   "main": "index.js",
-  "type": "module",
   "dependencies": {
     "aws-sdk": "^2.696.0",
     "config": "^3.3.1",

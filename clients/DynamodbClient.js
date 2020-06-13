@@ -1,17 +1,16 @@
 const config = require('config');
 const AWS = require('aws-sdk');
-const { marshall } = AWS.DynamoDB.Converter;
 
 class DynamoDbClient{
   constructor(tableName) {
     this.tableName = tableName;
-    const params = config.get('dynamoParams');
-    this.client = new AWS.DynamoDB(params);
+    const params = Object.assign({}, config.get('dynamoParams'));
+    this.client = new AWS.DynamoDB.DocumentClient(params);
   }
   async put(record) {
-    await this.client.putItem({
+    await this.client.put({
       TableName: this.tableName,
-      Item: marshall(record),
+      Item: record,
     }).promise();
   }
   async getById(id) {

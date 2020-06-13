@@ -1,7 +1,6 @@
 const DynamoDbClient = require('./DynamodbClient');
 const AWS = require('aws-sdk');
 const sinon = require('sinon');
-const { marshall } = AWS.DynamoDB.Converter;
 
 describe('DynamodbClient', () => {
   let sinonSandbox;
@@ -11,8 +10,8 @@ describe('DynamodbClient', () => {
   let dynamoQueryStub = sinon.stub();
   beforeEach(() => {
     sinonSandbox = sinon.createSandbox();
-    sinonSandbox.stub(AWS, 'DynamoDB').returns({
-      putItem(...args) {
+    sinonSandbox.stub(AWS.DynamoDB, 'DocumentClient').returns({
+      put(...args) {
         return {
           promise: () => dynamoPutStub(...args),
         };
@@ -47,7 +46,7 @@ describe('DynamodbClient', () => {
     await client.put(record);
     // THEN
     expect(dynamoPutStub.calledOnce).toBe(true);
-    expect(dynamoPutStub.firstCall.args[0].Item).toEqual(marshall(record));
+    expect(dynamoPutStub.firstCall.args[0].Item).toEqual(record);
     expect(dynamoPutStub.firstCall.args[0].TableName).toBe(tableName);
   });
   it('Can recover Records', async () => {
