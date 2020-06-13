@@ -1,16 +1,17 @@
 const config = require('config');
 const AWS = require('aws-sdk');
+const { marshall } = AWS.DynamoDB.Converter;
 
 class DynamoDbClient{
   constructor(tableName) {
     this.tableName = tableName;
     const params = config.get('dynamoParams');
-    this.client = new AWS.DynamoDB.DocumentClient(params);
+    this.client = new AWS.DynamoDB(params);
   }
   async put(record) {
-    await this.client.put({
+    await this.client.putItem({
       TableName: this.tableName,
-      Item: record,
+      Item: marshall(record),
     }).promise();
   }
   async getById(id) {
@@ -23,20 +24,31 @@ class DynamoDbClient{
     }).promise();
     return response.Items[0];
   }
-  async scanEvents(aggregateName = null, LastEvaluatedKey = false) {
+  async scanEvents(LastEvaluatedKey = false) {
     let params = {
       TableName: this.tableName,
     };
     if (LastEvaluatedKey && typeof LastEvaluatedKey === 'string') {
       params.ExclusiveStartKey = LastEvaluatedKey;
     }
-    if (aggregateName) {
-      params.FilterExpression = 'aggregateName = :aggregateName';
-      params.ExpressionAttributeValues = {
-        ':aggregateName': aggregateName,
-      };
-    }
     return await this.client.scan(params).promise();
+  }
+  async queryEvents(aggregateName, aggregateId, LastEvaluatedKey = false) {
+    let params = {
+      TableName: this.tableName,
+      KeyConditionExpression: 'aggregateName = :aggregateName',
+      ExpressionAttributeValues: {
+        ':aggregateName': aggregateName,
+      },
+    };
+    if (aggregateId) {
+      params.KeyConditionExpression += ' and aggregateId = :aggregateId';
+      params.ExpressionAttributeValues[':aggregateId'] = aggregateId;
+    }
+    if (LastEvaluatedKey && typeof LastEvaluatedKey === 'string') {
+      params.ExclusiveStartKey = LastEvaluatedKey;
+    }
+    return await this.client.query(params).promise();
   }
 }
 

@@ -47,6 +47,9 @@ resources:
         Properties:
           TableName: ${self:custom.eventStoreTableName}
           BillingMode: PAY_PER_REQUEST
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
           AttributeDefinitions:
             - AttributeName: aggregateName
               AttributeType: S
@@ -68,6 +71,12 @@ cors-config: &cors-config
     - X-Amz-User-Agent
     - X-Api-Key
 
+default-env: &default-env
+  STAGE: ${self:provider.stage}
+  NODE_ENV: ${self:provider.stage}
+  API_REGION: "#{AWS::Region}"
+  EVENT_STORE_TABLE_NAME: ${self:custom.eventStoreTableName}
+
 functions:
   hello:
     handler: hello.helloWorld
@@ -79,6 +88,8 @@ functions:
             <<: *cors-config
   CreateAccount:
     handler: controllers/account.createAccount
+    environment:
+      <<: *default-env
     events:
       - http:
           path: create-account

@@ -1,5 +1,5 @@
 {
-  "nodeEnv": "dev",
+  "NODE_ENV": "dev",
   "dynamoParams": {
     "convertEmptyValues": true,
     "region": "localhost",

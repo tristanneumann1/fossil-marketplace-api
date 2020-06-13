@@ -1,4 +1,4 @@
-const {httpHandler} = require('./lib/handler');
+const {httpHandler} = require('./utils/handler');
 
 async function helloWorld() {
   return 'Hello World';

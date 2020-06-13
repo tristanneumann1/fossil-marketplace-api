@@ -1,5 +1,5 @@
 const Account = require('./Account');
-const {LocalEventStore} = require('../lib/EventStore');
+const {LocalEventStore} = require('../utils/EventStore');
 
 describe('account aggregate', () => {
   it('Creates a new account', async () => {

@@ -1,4 +1,6 @@
 {
-  "nodeEnv": "NODE_ENV",
+  "NODE_ENV": "NODE_ENV",
+  "STAGE": "STAGE",
+  "API_REGION": "API_REGION",
   "eventStoreTableName": "EVENT_STORE_TABLE_NAME"
 }

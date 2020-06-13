@@ -1,8 +1,8 @@
 const config = require('config');
-const {httpHandler} = require('../lib/handler');
-const CustomError = require('../lib/Errors');
+const {httpHandler} = require('../utils/handler');
+const CustomError = require('../utils/Errors');
 const Account = require('../aggregates/Account');
-const {EventStore} = require('../lib/index').EventStore;
+const {EventStore} = require('../utils/index').EventStore;
 
 async function createAccount({body}) {
   if (!body || !body.email) {
@@ -16,5 +16,5 @@ async function createAccount({body}) {
 }
 
 module.exports = {
-  createAccount: httpHandler(createAccount),
+  createAccount: httpHandler(createAccount, true),
 };

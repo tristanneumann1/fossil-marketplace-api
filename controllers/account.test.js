@@ -4,9 +4,9 @@ describe('account', () => {
   it('Returns a 200 [Happy path]', async () => {
     // GIVEN
     const params = {
-      body: {
+      body: JSON.stringify({
         email: 'email@example.com',
-      },
+      }),
     };
     // WHEN
     const actual = await createAccount(params);
