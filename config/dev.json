@@ -1,3 +1,10 @@
 {
-  "nodeEnv": "dev"
+  "nodeEnv": "dev",
+  "dynamoParams": {
+    "convertEmptyValues": true,
+    "region": "localhost",
+    "endpoint": "http://localhost:8800",
+    "accessKeyId": "DEFAULT_ACCESS_KEY",
+    "secretAccessKey": "DEFAULT_SECRET"
+  }
 }

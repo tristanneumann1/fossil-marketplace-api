@@ -1,14 +1,62 @@
 service: fossil-marketplace
 app: fossil-marketplace
 plugins:
+  - serverless-dynamodb-local
   - serverless-offline
 
 provider:
   name: aws
   runtime: nodejs12.x
   versionFunctions: false
-  stage: dev
+  stage: ${opt:stage, "dev"}
   region: us-east-1
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - "dynamodb:PutItem"
+        - "dynamodb:GetItem"
+        - "dynamodb:UpdateItem"
+        - "dynamodb:DeleteItem"
+        - "dynamodb:BatchGetItem"
+        - "dynamodb:BatchWriteItem"
+        - "dynamodb:Query"
+      Resource:
+        - Fn::GetAtt: [EventStore, Arn]
+        - Fn::Join:
+            - '/'
+            - - Fn::GetAtt: [EventStore, Arn]
+              - '*'
+
+custom:
+  eventStoreTableName: fossil-marketplace-event-store
+  dynamodb:
+    stages:
+      - dev
+    start:
+      migrate: true
+      port: 8800
+      dbPath: ./.dynamodb
+      heapInitial: 200m
+      heapMax: 1g
+      convertEmptyValues: true
+
+resources:
+  - Resources:
+      EventStore:
+        Type: AWS::DynamoDB::Table
+        Properties:
+          TableName: ${self:custom.eventStoreTableName}
+          BillingMode: PAY_PER_REQUEST
+          AttributeDefinitions:
+            - AttributeName: aggregateName
+              AttributeType: S
+            - AttributeName: aggregateId
+              AttributeType: S
+          KeySchema:
+            - AttributeName: aggregateName
+              KeyType: HASH
+            - AttributeName: aggregateId
+              KeyType: RANGE
 
 cors-config: &cors-config
   origin: '*'

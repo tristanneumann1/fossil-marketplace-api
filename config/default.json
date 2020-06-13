@@ -1,3 +1,5 @@
 {
-  "nodeEnv": "dev"
+  "nodeEnv": "dev",
+  "eventStore": "DynamoEventStore",
+  "eventStoreTableName": "fossil-marketplace-event-store"
 }

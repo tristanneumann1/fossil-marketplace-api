@@ -1,3 +1,4 @@
 {
-  "nodeEnv": "NODE_ENV"
+  "nodeEnv": "NODE_ENV",
+  "eventStoreTableName": "EVENT_STORE_TABLE_NAME"
 }

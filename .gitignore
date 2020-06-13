@@ -18,4 +18,5 @@ var/
 
 # Serverless directories
 .serverless
+.dynamodb/
 node_modules/

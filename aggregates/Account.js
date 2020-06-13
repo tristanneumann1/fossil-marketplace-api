@@ -2,28 +2,27 @@ const {FMEvent} = require('../lib/Events');
 const {CustomError} = require('../lib/Errors');
 
 class Account {
-  constructor(eventStore) {
+  constructor() {
     this.AGGREGATE_NAME = 'Account';
     this.ACCOUNT_WAS_CREATED = 'AccountWasCreated';
-    this.eventStore = eventStore;
     this.accounts = {};
-    this._buildAggregate();
   }
-  createAccount(email) {
+  async createAccount(email) {
     if (this.accounts[email]) {
       throw new CustomError('Account already exists for email ' + email, 400);
     }
     const accountWasCreated = new FMEvent(this.ACCOUNT_WAS_CREATED, {aggregateName: this.AGGREGATE_NAME}, {email});
-    this.eventStore.registerEvent(accountWasCreated);
+    await this.eventStore.registerEvent(accountWasCreated);
     this._consumeEvent(accountWasCreated);
   }
-  _buildAggregate() {
-    const iterator = this.eventStore.getIterator();
-    const item = iterator.next();
+  async buildAggregate(eventStore) {
+    this.eventStore = eventStore;
+    const iterator = eventStore.getIterator();
+    const item = await iterator.next();
     while (!item.done) {
       const event = item.value;
       this._consumeEvent(event);
-      iterator.next();
+      await iterator.next();
     }
   }
   _consumeEvent(event) {

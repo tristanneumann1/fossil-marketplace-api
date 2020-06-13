@@ -1,14 +1,18 @@
+const config = require('config');
 const {httpHandler} = require('../lib/handler');
 const CustomError = require('../lib/Errors');
 const Account = require('../aggregates/Account');
+const {EventStore} = require('../lib/index').EventStore;
 
 async function createAccount({body}) {
-  if (!body.email) {
+  if (!body || !body.email) {
     throw new CustomError('Account email required', 400);
   }
   const email = body.email;
   const accountAggregate = new Account();
-  accountAggregate.createAccount(email);
+  const eventStore = new EventStore(config.get('eventStoreTableName'));
+  await accountAggregate.buildAggregate(eventStore);
+  await accountAggregate.createAccount(email);
 }
 
 module.exports = {

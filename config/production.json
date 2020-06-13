@@ -1,0 +1,5 @@
+{
+  "dynamoParams": {
+    "convertEmptyValues": true
+  }
+}
