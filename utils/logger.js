@@ -1,18 +1,15 @@
 const config = require('config');
 const { createLogger, format, transports } = require('winston');
-const { combine, timestamp, prettyPrint, colorize } = format;
+const { combine, timestamp, colorize, errors } = format;
  
 const logger = createLogger({
   format: combine(
+    colorize({colors: {error: 'red', info: 'blue', warn: 'yellow', debug: 'green'}}),
     timestamp(),
-    prettyPrint(),
-    colorize(),
+    errors({stack: true}),
+    format.printf((info) => `${info.level}${info.statusCode ? ' ' + info.statusCode : ''}: ${info.message} @${info.timestamp}${info.stack? '\n' + info.stack : ''}`),
   ),
-  transports: [
-    new transports.Console({
-      colorize: true,
-    }),
-  ],
+  transports: [new transports.Console()],
   exitOnError: false,
 });
 logger.level = config.loggerLevel;

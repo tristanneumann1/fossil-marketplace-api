@@ -33,7 +33,7 @@ function httpHandler(functionToRun, parseBody = false) {
           body: error.message,
         };
       }
-      logger.error(error.message);
+      logger.error(error);
       return {
         statusCode: 500,
         body: 'Internal Server Error',
@@ -61,8 +61,7 @@ function wsHandler(funcToRun, parseBody = false) {
           requestContext: event.requestContext,
         };
       } catch (ignore) {
-        logger.error('[wsHandler] Could not parse event body: ' + event.body);
-        return;
+        throw new CustomError('[wsHandler] Could not parse event body: ' + event.body, 400);
       }
     }
     return await funcToRun(params);
