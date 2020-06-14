@@ -19,3 +19,5 @@ var/
 .serverless
 .dynamodb/
 node_modules/
+
+coverage/

@@ -1,6 +1,6 @@
 const config = require('config');
 const {httpHandler} = require('../utils/handler');
-const CustomError = require('../utils/Errors');
+const {CustomError} = require('../utils/Errors');
 const Account = require('../aggregates/Account');
 const {EventStore} = require('../utils/index').EventStore;
 
@@ -12,7 +12,7 @@ async function createAccount({body}) {
   const accountAggregate = new Account();
   const eventStore = new EventStore(config.get('eventStoreTableName'));
   await accountAggregate.buildAggregate(eventStore);
-  await accountAggregate.createAccount(email);
+  await accountAggregate.createAccount(email, body);
 }
 
 module.exports = {

@@ -86,6 +86,18 @@ describe('DynamodbClient', () => {
     expect(dynamoScanStub.firstCall.args[0].TableName).toBe(tableName);
     expect(actual.Items[0]).toBe(record);
   });
+  it('Can scan paginated records', async () => {
+    // GIVEN
+    const lastEvaluatedKey = 'LastEvaluatedKey';
+    const tableName = 'DynamoTable';
+    const client = new DynamoDbClient(tableName);
+    // WHEN
+    await client.scanEvents(lastEvaluatedKey);
+    // THEN
+    expect(dynamoScanStub.calledOnce).toBe(true);
+    expect(dynamoScanStub.firstCall.args[0].TableName).toBe(tableName);
+    expect(dynamoScanStub.firstCall.args[0].ExclusiveStartKey).toBe(lastEvaluatedKey);
+  });
   it('Can query for aggregate type', async () => {
     // GIVEN
     const aggregateName = 'AggregateName';
@@ -105,5 +117,22 @@ describe('DynamodbClient', () => {
     expect(dynamoQueryStub.firstCall.args[0].TableName).toBe(tableName);
     expect(dynamoQueryStub.firstCall.args[0].ExpressionAttributeValues[':aggregateName']).toBe(aggregateName);
     expect(actual.Items[0]).toBe(record);
+  });
+  it('Can query for aggregate type and aggregateId', async () => {
+    // GIVEN
+    const aggregateName = 'AggregateName';
+    const aggregateId = 'aggregateId';
+    const lastEvaluatedKey = 'LastEvaluatedKey';
+    const tableName = 'DynamoTable';
+    const client = new DynamoDbClient(tableName);
+    // WHEN
+    await client.queryEvents(aggregateName, aggregateId, lastEvaluatedKey);
+    // THEN
+    expect(dynamoQueryStub.calledOnce).toBe(true);
+    expect(dynamoQueryStub.firstCall.args[0].TableName).toBe(tableName);
+    expect(dynamoQueryStub.firstCall.args[0].ExpressionAttributeValues[':aggregateName']).toBe(aggregateName);
+    expect(dynamoQueryStub.firstCall.args[0].ExpressionAttributeValues[':aggregateId']).toBe(aggregateId);
+    expect(dynamoQueryStub.firstCall.args[0].KeyConditionExpression).toBe('aggregateName = :aggregateName and aggregateId = :aggregateId');
+    expect(dynamoQueryStub.firstCall.args[0].ExclusiveStartKey).toBe(lastEvaluatedKey);
   });
 });

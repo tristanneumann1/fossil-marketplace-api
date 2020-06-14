@@ -8,11 +8,12 @@ class Account {
     this.ACCOUNT_WAS_CREATED = 'AccountWasCreated';
     this.accounts = {};
   }
-  async createAccount(email) {
+  async createAccount(email, info = {}) {
     if (this.accounts[email]) {
       throw new CustomError('Account already exists for email ' + email, 400);
     }
-    const accountWasCreated = new FMEvent(this.ACCOUNT_WAS_CREATED, {email}, {aggregateName: this.AGGREGATE_NAME, aggregateId: v4()});
+    info.email = email;
+    const accountWasCreated = new FMEvent(this.ACCOUNT_WAS_CREATED, info, {aggregateName: this.AGGREGATE_NAME, aggregateId: v4()});
     await this.eventStore.registerEvent(accountWasCreated);
     this._consumeEvent(accountWasCreated);
   }
