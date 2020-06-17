@@ -1,4 +1,4 @@
-const {CustomError} = require('./Errors');
+const {CustomError} = require('../utils/Errors');
 const DynamoDbClient = require('../clients/DynamodbClient');
 const config = require('config');
 
@@ -15,6 +15,10 @@ class BaseEventStore{
 class LocalEventStore extends BaseEventStore{
   constructor() {
     super();
+    if(localStorage && localStorage.getItem('useLocalStorage')) {
+      this.items = JSON.parse(localStorage.getItem('db'));
+      return;
+    }
     this.items = [];
   }
   getAllEvents() {
@@ -24,10 +28,20 @@ class LocalEventStore extends BaseEventStore{
   }
   async registerEvent(event) {
     this.items.push(event);
+    if (localStorage && localStorage.getItem('useLocalStorage'));
+    localStorage.setItem('db', JSON.stringify(this.items));
   }
-  async* getIterator() {
+  async* getIterator(aggregateName, aggregateId) {
     let i = 0;
     while(i < this.items.length) {
+      if (aggregateName && this.items[i].aggregateName !== aggregateName) {
+        i++;
+        continue;
+      }
+      if (aggregateId && this.items[i].aggregateId !== aggregateId) {
+        i++;
+        continue;
+      }
       yield this.items[i];
       i++;
     }
@@ -40,14 +54,14 @@ class DynamoEventStore extends BaseEventStore{
     this.client = new DynamoDbClient(tableName);
   }
   async registerEvent(event) {
-    await this.client.put(event);
+    await this.client.putEvent(event);
   }
   async* getIterator(aggregateName = null, aggregateId = null) {
     let LastEvaluatedKey = true;
     while (LastEvaluatedKey) {
       let response;
       if (aggregateName) {
-        response = this.client.queryEvents(aggregateName, aggregateId, LastEvaluatedKey);
+        response = await this.client.queryEvents(aggregateName, aggregateId, LastEvaluatedKey);
       } else {
         response = await this.client.scanEvents(LastEvaluatedKey);
       }

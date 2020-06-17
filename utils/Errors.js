@@ -3,7 +3,7 @@ const logger = require('./logger');
 class CustomError extends Error {
   constructor(message, statusCode) {
     super(message);
-    logger.error(this);
+    logger.warn(this);
     this.message = message;
     this.statusCode = statusCode;
   }

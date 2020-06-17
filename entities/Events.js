@@ -1,5 +1,5 @@
 const {v4} = require('uuid');
-const {CustomError} = require('./Errors');
+const {CustomError} = require('../utils/Errors');
 
 class FMEvent{
   constructor(name, payload, {aggregateName, aggregateId}) {

@@ -7,7 +7,7 @@ const logger = createLogger({
     colorize({colors: {error: 'red', info: 'blue', warn: 'yellow', debug: 'green'}}),
     timestamp(),
     errors({stack: true}),
-    format.printf((info) => `${info.level}${info.statusCode ? ' ' + info.statusCode : ''}: ${info.message} @${info.timestamp}${info.stack? '\n' + info.stack : ''}`),
+    format.printf((info) => `${info.level}${info.statusCode ? ' ' + info.statusCode : ''}: ${info.message} @${info.timestamp}${info.stack && info.level.includes('error')? '\n' + info.stack : ''}`),
   ),
   transports: [new transports.Console()],
   exitOnError: false,

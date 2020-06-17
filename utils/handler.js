@@ -10,7 +10,7 @@ function httpHandler(functionToRun, parseBody = false) {
       queryStringParameters: event.queryStringParameters,
       headers: event.headers,
       pathParameters: event.pathParameters,
-      body: parseBody? JSON.parse(event.body) : event.body,
+      body: (parseBody && event.body)? JSON.parse(event.body) : event.body,
     };
     try {
       const result = await functionToRun(params);
