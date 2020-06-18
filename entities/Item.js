@@ -2,8 +2,8 @@ class Item {
   constructor(itemId, payload) {
     this.itemId = itemId;
     this.fossilId = payload.fossilId;
-    this.sellerId = null;
-    this.buyerId = null;
+    this.sellerId = payload.sellerId || null;
+    this.buyerId = payload.buyerId || null;
   }
 }
 

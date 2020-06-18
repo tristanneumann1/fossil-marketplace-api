@@ -119,3 +119,23 @@ functions:
           method: POST
           cors:
             <<: *cors-config
+  UnListItem:
+    handler: controllers/fossil.unlistItem
+    environment:
+      <<: *default-env
+    events:
+      - http:
+          path: unlist-item
+          method: POST
+          cors:
+            <<: *cors-config
+  DesireItem:
+    handler: controllers/fossil.desireItem
+    environment:
+      <<: *default-env
+    events:
+      - http:
+          path: desire-item
+          method: POST
+          cors:
+            <<: *cors-config
