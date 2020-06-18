@@ -14,21 +14,11 @@ class DynamoDbClient{
     if (!(event instanceof FMEvent)) {
       throw new CustomError('DynamodbClient.putEvent, event not valid type');
     }
-    const timestamp = Date.now();
-    const aggregateByNameKey = '[AggByName]' + event.aggregateName;
-    const aggregateByIdKey = '[AggById]' + event.aggregateName + '|' + event.aggregateId;
-    const aggregateByNamePayload = Object.assign({}, event);
-    const aggregateByIdPayload = Object.assign({}, event);
+    const payload = Object.assign({}, event);
+    payload.eventDate = new Date().toISOString();
+    payload.aggregateIdKey = event.aggregateId + '#' + payload.eventDate;
 
-    aggregateByNamePayload.aggregateKey = aggregateByNameKey;
-    aggregateByNamePayload.timestamp = timestamp;
-    aggregateByIdPayload.aggregateKey = aggregateByIdKey;
-    aggregateByIdPayload.timestamp = timestamp;
-
-    await Promise.all([
-      this.put(aggregateByNamePayload),
-      this.put(aggregateByIdPayload),
-    ]);
+    await this.put(payload);
   }
   async put(record) {
     try {
@@ -70,13 +60,17 @@ class DynamoDbClient{
     let params = {
       ConsistentRead: true,
       TableName: this.tableName,
-      KeyConditionExpression: 'aggregateKey = :aggregateKey',
+      KeyConditionExpression: 'begins_with(eventDate, :eventDate) and aggregateName = :aggregateName',
       ExpressionAttributeValues: {
-        ':aggregateKey': '[AggByName]' + aggregateName,
+        ':aggregateName': aggregateName,
+        ':eventDate': '20',
       },
     };
     if (aggregateId) {
-      params.ExpressionAttributeValues[':aggregateKey'] = '[AggById]' + aggregateName + '|' + aggregateId;
+      params.IndexName = config.get('eventStoreIndexName');
+      params.KeyConditionExpression = 'aggregateName = :aggregateName and begins_with(aggregateIdKey, :aggregateId)';
+      params.ExpressionAttributeValues[':aggregateId'] = aggregateId;
+      delete params.ExpressionAttributeValues[':eventDate'];
     }
     if (LastEvaluatedKey && typeof LastEvaluatedKey === 'string') {
       params.ExclusiveStartKey = LastEvaluatedKey;

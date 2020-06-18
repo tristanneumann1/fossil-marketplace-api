@@ -3,5 +3,6 @@
   "STAGE": "dev",
   "API_REGION": "us-east-1",
   "eventStore": "DynamoEventStore",
-  "eventStoreTableName": "fossil-marketplace-event-store"
+  "eventStoreTableName": "fossil-marketplace-event-store",
+  "eventStoreIndexName": "aggregate-by-id"
 }

@@ -29,7 +29,8 @@ provider:
               - '*'
 
 custom:
-  eventStoreTableName: fossil-mp-event-store
+  eventStoreTableName: fossil-marketplace-event-store
+  eventStoreIndexName: aggregate-by-id
   dynamodb:
     stages:
       - dev
@@ -51,15 +52,26 @@ resources:
             ReadCapacityUnits: 1
             WriteCapacityUnits: 1
           AttributeDefinitions:
-            - AttributeName: aggregateKey
+            - AttributeName: aggregateName
               AttributeType: S
-            - AttributeName: timestamp
-              AttributeType: N
+            - AttributeName: eventDate
+              AttributeType: S
+            - AttributeName: aggregateIdKey
+              AttributeType: S
           KeySchema:
-            - AttributeName: aggregateKey
+            - AttributeName: aggregateName
               KeyType: HASH
-            - AttributeName: timestamp
+            - AttributeName: eventDate
               KeyType: RANGE
+          LocalSecondaryIndexes:
+            - IndexName: ${self:custom.eventStoreIndexName}
+              KeySchema:
+              - AttributeName: aggregateName
+                KeyType: HASH
+              - AttributeName: aggregateIdKey
+                KeyType: RANGE
+              Projection:
+                ProjectionType: ALL
 
 cors-config: &cors-config
   origin: '*'
@@ -76,6 +88,7 @@ default-env: &default-env
   NODE_ENV: ${self:provider.stage}
   API_REGION: "#{AWS::Region}"
   EVENT_STORE_TABLE_NAME: ${self:custom.eventStoreTableName}
+  EVENT_STORE_INDEX_NAME: ${self:custom.eventStoreIndexName}
 
 functions:
   hello:
@@ -97,7 +110,7 @@ functions:
           cors:
             <<: *cors-config
   ListItem:
-    handler: controllers/account.listItem
+    handler: controllers/fossil.listItem
     environment:
       <<: *default-env
     events:

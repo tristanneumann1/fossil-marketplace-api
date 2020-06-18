@@ -90,28 +90,4 @@ describe('account aggregate', () => {
       expect(accountWasCreated.payload.dodoCode).toBe(info.dodoCode);
     });
   });
-  describe('List Item', () => {
-    const itemId = 'item-id';
-    const userToken = 'user-token';
-    let aggregate;
-    beforeEach(async () => {
-      aggregate = new Account();
-      const eventStore = new LocalEventStore();
-      await aggregate.buildAggregate(eventStore);
-      await aggregate.createAccount(userToken);
-    });
-    it('Adds Item to listed account', async () => {
-      // WHEN
-      await aggregate.listItem(userToken, {itemId});
-      // THEN
-      expect(aggregate.accounts[userToken].listedItems).toBeDefined();
-      expect(aggregate.accounts[userToken].listedItems[itemId]).toBeDefined();
-      const item = aggregate.accounts[userToken].listedItems[itemId][0];
-      expect(item.itemId).toBe(itemId);
-    });
-    it('Does not list item when account does not exist', async () => {
-      // THEN
-      await expect(aggregate.listItem('other-user-token', {itemId})).rejects.toThrow(/Account does not exist/);
-    });
-  });
 });

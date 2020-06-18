@@ -2,5 +2,6 @@
   "NODE_ENV": "NODE_ENV",
   "STAGE": "STAGE",
   "API_REGION": "API_REGION",
-  "eventStoreTableName": "EVENT_STORE_TABLE_NAME"
+  "eventStoreTableName": "EVENT_STORE_TABLE_NAME",
+  "eventStoreIndexName": "EVENT_STORE_INDEX_NAME"
 }

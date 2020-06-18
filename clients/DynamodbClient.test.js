@@ -72,22 +72,21 @@ describe('DynamodbClient', () => {
   });
   it('can publish an event', async () => {
     // GIVEN
-    const event = new FMEvent('Something Happened', {}, {aggregateName: 'Aggregate', aggregateId: 'aggregate-id'});
+    const aggregateName = 'Aggregate';
+    const aggregateId = 'aggregateId';
+    const event = new FMEvent('Something Happened', {}, {aggregateName, aggregateId});
     const tableName = 'DynamoTable';
     const client = new DynamoDbClient(tableName);
-    const expectedAggregateKey = '[AggByName]' + event.aggregateName;
-    const expectedAggregateIdKey = '[AggById]' + event.aggregateName + '|' + event.aggregateId;
     // WHEN
     await client.putEvent(event);
     // THEN
-    expect(dynamoPutStub.calledTwice).toBe(true);
+    expect(dynamoPutStub.calledOnce).toBe(true);
     const firstCallArg = dynamoPutStub.args[0][0];
-    const secondCallArg = dynamoPutStub.args[1][0];
-    expect(firstCallArg.Item.aggregateKey).toEqual(expectedAggregateKey);
-    expect(secondCallArg.Item.aggregateKey).toEqual(expectedAggregateIdKey);
-    expect(firstCallArg.Item.timestamp).toEqual(secondCallArg.Item.timestamp);
-    expect(firstCallArg.TableName).toBe(tableName);    
-    expect(secondCallArg.TableName).toBe(tableName);    
+    expect(firstCallArg.Item.aggregateName).toEqual(aggregateName);
+    expect(firstCallArg.Item.aggregateId).toEqual(aggregateId);
+    expect(firstCallArg.Item.aggregateIdKey.includes(aggregateId + '#')).toBe(true);
+    expect(firstCallArg.Item.eventDate).toBeDefined();
+    expect(firstCallArg.TableName).toBe(tableName);   
   });
   it('Does not publish invalid eventt', async () => {
     // GIVEN
@@ -133,7 +132,6 @@ describe('DynamodbClient', () => {
       aggregateName: 'AggregateName',
       id: 'event_id',
     };
-    const aggregateKey = '[AggByName]' + record.aggregateName;
     const tableName = 'DynamoTable';
     const client = new DynamoDbClient(tableName);
     dynamoQueryStub.resolves({
@@ -144,7 +142,7 @@ describe('DynamodbClient', () => {
     // THEN
     expect(dynamoQueryStub.calledOnce).toBe(true);
     expect(dynamoQueryStub.firstCall.args[0].TableName).toBe(tableName);
-    expect(dynamoQueryStub.firstCall.args[0].ExpressionAttributeValues[':aggregateKey']).toBe(aggregateKey);
+    expect(dynamoQueryStub.firstCall.args[0].ExpressionAttributeValues[':aggregateName']).toBe(record.aggregateName);
     expect(actual.Items[0]).toBe(record);
   });
   it('Can query for aggregate type and aggregateId', async () => {
@@ -153,15 +151,15 @@ describe('DynamodbClient', () => {
     const aggregateId = 'aggregateId';
     const lastEvaluatedKey = 'LastEvaluatedKey';
     const tableName = 'DynamoTable';
-    const aggregateKey = '[AggById]' + aggregateName + '|' + aggregateId;
     const client = new DynamoDbClient(tableName);
     // WHEN
     await client.queryEvents(aggregateName, aggregateId, lastEvaluatedKey);
     // THEN
     expect(dynamoQueryStub.calledOnce).toBe(true);
     expect(dynamoQueryStub.firstCall.args[0].TableName).toBe(tableName);
-    expect(dynamoQueryStub.firstCall.args[0].ExpressionAttributeValues[':aggregateKey']).toBe(aggregateKey);
-    expect(dynamoQueryStub.firstCall.args[0].KeyConditionExpression).toBe('aggregateKey = :aggregateKey');
+    expect(dynamoQueryStub.firstCall.args[0].ExpressionAttributeValues[':aggregateName']).toBe(aggregateName);
+    expect(dynamoQueryStub.firstCall.args[0].ExpressionAttributeValues[':aggregateId']).toBe(aggregateId);
+    expect(dynamoQueryStub.firstCall.args[0].KeyConditionExpression).toBe('aggregateName = :aggregateName and begins_with(aggregateIdKey, :aggregateId)');
     expect(dynamoQueryStub.firstCall.args[0].ExclusiveStartKey).toBe(lastEvaluatedKey);
   });
 });
