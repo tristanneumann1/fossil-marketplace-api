@@ -139,3 +139,13 @@ functions:
           method: POST
           cors:
             <<: *cors-config
+  UnDesireItem:
+    handler: controllers/fossil.undesireItem
+    environment:
+      <<: *default-env
+    events:
+      - http:
+          path: undesire-item
+          method: POST
+          cors:
+            <<: *cors-config

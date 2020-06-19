@@ -23,7 +23,7 @@ async function unlistItem({headers, body}) {
     throw new CustomError('Account token required', 400);
   }
   if(!body || !body.itemId || !body.fossilId) {
-    throw new CustomError('ItemId is required', 400);
+    throw new CustomError('ItemId and fossilId are required', 400);
   }
   body.accountId = headers.userToken;
   const fossilAggregate = new Fossil();
@@ -46,8 +46,23 @@ async function desireItem({headers, body}) {
   return await fossilAggregate.desireItem(body);
 }
 
+async function undesireItem({headers, body}) {
+  if (!headers || !headers.userToken) {
+    throw new CustomError('Account token required', 400);
+  }
+  if(!body || !body.fossilId) {
+    throw new CustomError('fossilId is required', 400);
+  }
+  body.accountId = headers.userToken;
+  const fossilAggregate = new Fossil();
+  const eventStore = new EventStore(config.get('eventStoreTableName'));
+  await fossilAggregate.buildAggregate(eventStore);
+  return await fossilAggregate.undesireItem(body);
+}
+
 module.exports = {
   listItem: httpHandler(listItem, true),
-  desireItem: httpHandler(desireItem, true),
   unlistItem: httpHandler(unlistItem, true),
+  desireItem: httpHandler(desireItem, true),
+  undesireItem: httpHandler(undesireItem, true),
 };

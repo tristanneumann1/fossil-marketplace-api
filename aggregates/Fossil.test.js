@@ -2,7 +2,6 @@ const Fossil = require('./Fossil.js');
 const Account = require('./Account.js');
 const {LocalEventStore} = require('../entities/EventStore');
 const {FMEvent} = require('../entities/Events');
-const fossil = require('../controllers/fossil.js');
 
 describe('Fossil', () => {
   const fossilId = 'fossil-id';
@@ -77,7 +76,7 @@ describe('Fossil', () => {
       // THEN
       expect(fossilAggregate.fossils[fossilId]).toBeDefined();
       expect(Object.keys(fossilAggregate.fossils[fossilId]).length).toBe(1);
-      const itemId = Object.keys(fossilAggregate.fossils[fossilId]).find((key) => key !== 'desiredAccountIds');
+      const itemId = fossilAggregate._itemIds(fossilId)[0];
       expect(fossilAggregate.fossils[fossilId][itemId].fossilId).toBe(fossilId);
       expect(fossilAggregate.fossils[fossilId][itemId].sellerId).toBe(accountId);
     });
@@ -91,40 +90,8 @@ describe('Fossil', () => {
       await expect(fossilAggregate.listItem({accountId})).rejects.toThrow(/Fossil requires fossilId/);
     });
   });
-  describe('Desire Item', () => {
-    it('Adds Item to desired account if seller exists', async () => {
-      // GIVEN
-      await fossilAggregate.listItem({accountId: accountId2, fossilId});
-      // WHEN
-      await fossilAggregate.desireItem({accountId, fossilId});
-      // THEN
-      expect(fossilAggregate.fossils[fossilId]).toBeDefined();
-      expect(Object.keys(fossilAggregate.fossils[fossilId]).length).toBe(1);
-      const itemId = Object.keys(fossilAggregate.fossils[fossilId]).find((key) => key !== 'desiredAccountIds');
-      expect(fossilAggregate.fossils[fossilId][itemId].fossilId).toBe(fossilId);
-      expect(fossilAggregate.fossils[fossilId][itemId].sellerId).toBe(accountId2);
-      expect(fossilAggregate.fossils[fossilId][itemId].buyerId).toBe(accountId);
-    });
-    it('Adds Account to desired accounts if seller does not exists', async () => {
-      // WHEN
-      await fossilAggregate.desireItem({accountId, fossilId});
-      // THEN
-      expect(fossilAggregate.fossils[fossilId].desiredAccountIds).toBeDefined();
-      expect(fossilAggregate.fossils[fossilId].desiredAccountIds.length).toBe(1);
-      expect(fossilAggregate.fossils[fossilId].desiredAccountIds[0]).toBe(accountId);
-    });
-    it('Does not desire item when account does not exist', async () => {
-      // THEN
-      await expect(fossilAggregate.desireItem({fossilId})).rejects.toThrow(/Account is required/);
-      await expect(fossilAggregate.desireItem({accountId: 'invalid_account', fossilId})).rejects.toThrow(/Account does not exist/);
-    });
-    it('Does not desire item when no fossil id available', async () => {
-      // THEN
-      await expect(fossilAggregate.desireItem({accountId})).rejects.toThrow(/Fossil requires fossilId/);
-    });
-  });
   describe('Unlist Item', () => {
-    it('removes seller from item', async () => {
+    it('removes item', async () => {
       // GIVEN
       await fossilAggregate.listItem({accountId, fossilId});
       const itemId = fossilAggregate._itemIds(fossilId)[0];
@@ -172,6 +139,75 @@ describe('Fossil', () => {
       const itemId = fossilAggregate._itemIds(fossilId)[0];
       // THEN
       await expect(fossilAggregate.unlistItem({itemId, fossilId, accountId: accountId2})).rejects.toThrow(/User is not seller of item/);
+    });
+  });
+  describe('Desire Item', () => {
+    it('Adds Item to desired account if seller exists', async () => {
+      // GIVEN
+      await fossilAggregate.listItem({accountId: accountId2, fossilId});
+      // WHEN
+      await fossilAggregate.desireItem({accountId, fossilId});
+      // THEN
+      expect(fossilAggregate.fossils[fossilId]).toBeDefined();
+      expect(Object.keys(fossilAggregate.fossils[fossilId]).length).toBe(1);
+      const itemId = fossilAggregate._itemIds(fossilId)[0];
+      expect(fossilAggregate.fossils[fossilId][itemId].fossilId).toBe(fossilId);
+      expect(fossilAggregate.fossils[fossilId][itemId].sellerId).toBe(accountId2);
+      expect(fossilAggregate.fossils[fossilId][itemId].buyerId).toBe(accountId);
+    });
+    it('Adds Account to desired accounts if seller does not exists', async () => {
+      // WHEN
+      await fossilAggregate.desireItem({accountId, fossilId});
+      // THEN
+      expect(fossilAggregate.fossils[fossilId].desiredAccountIds).toBeDefined();
+      expect(fossilAggregate.fossils[fossilId].desiredAccountIds.length).toBe(1);
+      expect(fossilAggregate.fossils[fossilId].desiredAccountIds[0]).toBe(accountId);
+    });
+    it('Does not desire item when account does not exist', async () => {
+      // THEN
+      await expect(fossilAggregate.desireItem({fossilId})).rejects.toThrow(/Account is required/);
+      await expect(fossilAggregate.desireItem({accountId: 'invalid_account', fossilId})).rejects.toThrow(/Account does not exist/);
+    });
+    it('Does not desire item when no fossil id available', async () => {
+      // THEN
+      await expect(fossilAggregate.desireItem({accountId})).rejects.toThrow(/Fossil requires fossilId/);
+    });
+  });
+  describe('Undesire Item', () => {
+    it('Undesires the item if not currently in a match', async () => {
+      // GIVEN
+      await fossilAggregate.desireItem({accountId, fossilId});
+      // WHEN
+      await fossilAggregate.undesireItem({accountId, fossilId});
+      // THEN
+      expect(fossilAggregate.fossils[fossilId]).toBeDefined();
+      expect(fossilAggregate.fossils[fossilId].desiredAccountIds).toBeDefined();
+      expect(fossilAggregate.fossils[fossilId].desiredAccountIds.length).toBe(0);
+    });
+    it('Undesires the item even in a match', async () => {
+      // GIVEN
+      await fossilAggregate.listItem({accountId: accountId2, fossilId});
+      await fossilAggregate.desireItem({accountId, fossilId});
+      // WHEN
+      await fossilAggregate.undesireItem({accountId, fossilId});
+      // THEN
+      expect(fossilAggregate.fossils[fossilId]).toBeDefined();
+      expect(fossilAggregate._itemIds(fossilId).length).toBe(1);
+      const itemId = fossilAggregate._itemIds(fossilId)[0];
+      expect(fossilAggregate.fossils[fossilId][itemId].buyerId).toBe(null);
+    });
+    it('Throws an error if item not being desired', async () => {
+      // THEN
+      await expect(fossilAggregate.undesireItem({accountId, fossilId})).rejects.toThrow(/Item not currently desired/);
+    });
+    it('Does not list item when account does not exist', async () => {
+      // THEN
+      await expect(fossilAggregate.undesireItem({fossilId})).rejects.toThrow(/Account is required/);
+      await expect(fossilAggregate.undesireItem({accountId: 'invalid_account', fossilId})).rejects.toThrow(/Account does not exist/);
+    });
+    it('Does not list item when no fossil id available', async () => {
+      // THEN
+      await expect(fossilAggregate.undesireItem({accountId})).rejects.toThrow(/Fossil requires fossilId/);
     });
   });
 });

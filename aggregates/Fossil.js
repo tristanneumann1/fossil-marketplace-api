@@ -8,8 +8,9 @@ class Fossil {
   constructor() {
     this.AGGREGATE_NAME = 'Fossil';
     this.ITEM_WAS_LISTED = 'ItemWasListed';
-    this.ITEM_WAS_DESIRED = 'ItemWasDesired';
     this.ITEM_WAS_UNLISTED = 'ItemWasUnlisted';
+    this.ACCOUNT_MADE_TO_WAIT = 'AccountMadeToWait';
+    this.ACCOUNT_STOPPED_WAITING = 'AccountStoppedWaiting';
     this.fossils = {};
   }
   async buildAggregate(eventStore, aggregateId) {
@@ -29,6 +30,15 @@ class Fossil {
     const itemId = v4();
     payload.itemId = itemId;
     const fossilWasListed = new FMEvent(this.ITEM_WAS_LISTED, payload, {aggregateName: this.AGGREGATE_NAME, aggregateId: itemId});
+    
+    const fossilListings = this.fossils[payload.fossilId];
+    if (
+      fossilListings &&
+      fossilListings.desiredAccountIds &&
+      fossilListings.desiredAccountIds.length
+    ) {
+      payload.buyerId = fossilListings.desiredAccountIds[0];
+    }
     await this.eventStore.registerEvent(fossilWasListed);
     this._consumeEvent(fossilWasListed);
   }
@@ -41,27 +51,104 @@ class Fossil {
     if(item.sellerId !== accountId) {
       throw new CustomError('User is not seller of item', 400);
     }
-    if (item.buyerId) {
-      const availableItem = this._findAvailableItem(fossilId);
-      if (availableItem) {
-        payload.newItemId = availableItem.itemId;
-      }
-    }
     const fossilWasUnlisted = new FMEvent(this.ITEM_WAS_UNLISTED, payload, {aggregateName: this.AGGREGATE_NAME, aggregateId: itemId});
     await this.eventStore.registerEvent(fossilWasUnlisted);
     this._consumeEvent(fossilWasUnlisted);
-
+    const buyerId = item.buyerId;
+    if(!buyerId) {
+      return;
+    }
+    // add buyer to new item if available
+    const availableItem = this._findAvailableItem(fossilId);
+    if (availableItem) {
+      availableItem.buyerId = buyerId;
+      const itemWasListed = new FMEvent(this.ITEM_WAS_LISTED, availableItem, {aggregateName: this.AGGREGATE_NAME, aggregateId: availableItem.itemId});
+      await this.eventStore.registerEvent(itemWasListed);
+      this._consumeEvent(itemWasListed);
+      return;
+    }
+    const accountMadeToWait = new FMEvent(this.ACCOUNT_MADE_TO_WAIT, {accountId: buyerId, fossilId}, {aggregateName: this.AGGREGATE_NAME, aggregateId: fossilId});
+    await this.eventStore.registerEvent(accountMadeToWait);
+    this._consumeEvent(accountMadeToWait);
   }
   async desireItem(payload) {
     await this._validatePayload(payload);
     const desiredItem = this._findAvailableItem(payload.fossilId);
     if (desiredItem) {
-      const itemId = desiredItem.itemId;
-      payload.itemId = itemId;
+      desiredItem.buyerId = payload.accountId;
+      const itemWasListed = new FMEvent(this.ITEM_WAS_LISTED, desiredItem, {aggregateName: this.AGGREGATE_NAME, aggregateId: desiredItem.itemId});
+      await this.eventStore.registerEvent(itemWasListed);
+      this._consumeEvent(itemWasListed);
+      return;
     }
-    const fossilWasDesired = new FMEvent(this.ITEM_WAS_DESIRED, payload, {aggregateName: this.AGGREGATE_NAME, aggregateId: payload.fossilId});
-    await this.eventStore.registerEvent(fossilWasDesired);
-    this._consumeEvent(fossilWasDesired);
+    const accountMadeToWait = new FMEvent(this.ACCOUNT_MADE_TO_WAIT, payload, {aggregateName: this.AGGREGATE_NAME, aggregateId: payload.fossilId});
+    await this.eventStore.registerEvent(accountMadeToWait);
+    this._consumeEvent(accountMadeToWait);
+  }
+  async undesireItem(payload) {
+    await this._validatePayload(payload);
+    const fossilListings = this.fossils[payload.fossilId];
+    if (
+      fossilListings &&
+      fossilListings.desiredAccountIds &&
+      fossilListings.desiredAccountIds.indexOf(payload.accountId) > -1
+    ) {
+      const accountStoppedWaiting = new FMEvent(this.ACCOUNT_STOPPED_WAITING, payload, {aggregateName: this.AGGREGATE_NAME, aggregateId: payload.fossilId});
+      await this.eventStore.registerEvent(accountStoppedWaiting);
+      this._consumeEvent(accountStoppedWaiting);
+      return;
+    }
+    const itemDesiredId = this._itemIds(payload.fossilId).find((itemId) => {
+      return this.fossils[payload.fossilId][itemId].buyerId === payload.accountId;
+    });
+    if (!itemDesiredId) {
+      throw new CustomError('Item not currently desired', 400);
+    }
+    const itemDesired = this.fossils[payload.fossilId][itemDesiredId];
+    itemDesired.buyerId = null;
+    const itemWasListed = new FMEvent(this.ITEM_WAS_LISTED, itemDesired, {aggregateName: this.AGGREGATE_NAME, aggregateId: itemDesired.itemId});
+    await this.eventStore.registerEvent(itemWasListed);
+    this._consumeEvent(itemWasListed);
+  }
+  _consumeEvent(event) {
+    if (event.aggregateName !== this.AGGREGATE_NAME) {
+      return;
+    }
+    if (!this.fossils[event.payload.fossilId]) {
+      this.fossils[event.payload.fossilId] = {};
+    }
+    const fossilListings = this.fossils[event.payload.fossilId];
+    
+    if (event.name === this.ITEM_WAS_LISTED) {
+      // Splice buyerId out of desiredAccounts
+      if (
+        event.payload.buyerId &&
+        fossilListings.desiredAccountIds &&
+        fossilListings.desiredAccountIds.indexOf(event.payload.buyerId) > -1
+      ) {
+        fossilListings.desiredAccountIds.splice(fossilListings.desiredAccountIds.indexOf(event.payload.buyerId), 1);
+      }
+      fossilListings[event.aggregateId] = new Item(event.aggregateId, event.payload);
+    }
+    if (event.name === this.ACCOUNT_MADE_TO_WAIT) {
+      if (!fossilListings.desiredAccountIds) {
+        fossilListings.desiredAccountIds = [];
+      }
+      fossilListings.desiredAccountIds.push(event.payload.accountId);
+    }
+    if (event.name === this.ITEM_WAS_UNLISTED) {
+      const {itemId} = event.payload;
+      delete fossilListings[itemId];
+    }
+    if (event.name === this.ACCOUNT_STOPPED_WAITING) {
+      const {accountId} = event.payload;
+      if (
+        fossilListings.desiredAccountIds &&
+        fossilListings.desiredAccountIds.indexOf(accountId) > -1
+      ) {
+        fossilListings.desiredAccountIds.splice(fossilListings.desiredAccountIds.indexOf(accountId), 1);
+      }
+    }
   }
   async _validatePayload(payload) {
     const accountId = payload.accountId;
@@ -77,51 +164,10 @@ class Fossil {
       throw new CustomError('Account does not exist: ' + accountId, 400);
     }
   }
-  _consumeEvent(event) {
-    if (event.aggregateName !== this.AGGREGATE_NAME) {
-      return;
-    }
-    if (!this.fossils[event.payload.fossilId]) {
-      this.fossils[event.payload.fossilId] = {};
-    }
-    const fossilListings = this.fossils[event.payload.fossilId];
-    
-    if (event.name === this.ITEM_WAS_LISTED) {
-      if (
-        fossilListings.desiredAccountIds &&
-        fossilListings.desiredAccountIds.length
-      ) {
-        event.payload.buyerId = fossilListings.desiredAccountIds.shift();
-      }
-      fossilListings[event.aggregateId] = new Item(event.aggregateId, event.payload);
-    }
-    if (event.name === this.ITEM_WAS_DESIRED) {
-      if (event.payload.itemId && fossilListings[event.payload.itemId]) {
-        fossilListings[event.payload.itemId].buyerId = event.payload.accountId;
-        return;
-      }
-      if (!fossilListings.desiredAccountIds) {
-        fossilListings.desiredAccountIds = [];
-      }
-      fossilListings.desiredAccountIds.push(event.payload.accountId);
-    }
-    if (event.name === this.ITEM_WAS_UNLISTED) {
-      const {itemId, newItemId = null} = event.payload;
-      const buyerId = fossilListings[itemId].buyerId;
-      delete fossilListings[itemId];
-      if (buyerId) {
-        if (newItemId && fossilListings[newItemId]) {
-          fossilListings[newItemId].buyerId = buyerId;
-          return;
-        }
-        if (!fossilListings.desiredAccountIds) {
-          fossilListings.desiredAccountIds = [];
-        }
-        fossilListings.desiredAccountIds.push(buyerId);
-      }
-    }
-  }
   _itemIds(fossilId) {
+    if (!this.fossils[fossilId]) {
+      return [];
+    }
     return Object.keys(this.fossils[fossilId]).filter((key) => key !== 'desiredAccountIds');
   }
   _findAvailableItem(fossilId) {
