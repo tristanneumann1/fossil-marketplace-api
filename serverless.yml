@@ -1,6 +1,10 @@
+org: tristanneumann1
 service: fossil-marketplace
 app: fossil-marketplace
+
 plugins:
+  - serverless-apigw-binary
+  # - serverless-domain-manager
   - serverless-dynamodb-local
   - serverless-plugin-offline-dynamodb-stream
   - serverless-offline
@@ -34,8 +38,17 @@ provider:
               - '*'
 
 custom:
+  secrets: ${file(secrets.json)}
   eventStoreTableName: fossil-marketplace-event-store
   eventStoreIndexName: aggregate-by-id
+  apigwBinary:
+    types:
+      - '*/*'
+  # customDomain:
+  #   domainName: ${self:custom.secrets.DOMAIN}
+  #   basePath: ''
+  #   stage: ${self:custom.secrets.NODE_ENV}
+  #   createRoute53Record: true
   dynamodb:
     stages:
       - dev
@@ -126,6 +139,11 @@ functions:
           arn:
             Fn::GetAtt: [EventStore, StreamArn]
           startingPosition: LATEST
+  nuxt:
+    handler: controllers/client.nuxt
+    events:
+      - http: ANY /
+      - http: ANY /{proxy+}
   # COMMANDS
   CreateAccount:
     handler: controllers/account.createAccount
