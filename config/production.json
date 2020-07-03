@@ -2,5 +2,11 @@
   "NODE_ENV": "production",
   "dynamoParams": {
     "convertEmptyValues": true
+  },
+  "loggerLevel": "info",
+  "redis": {
+    "host": "us1-cosmic-crow-30464.lambda.store",
+    "port": "30464",
+    "password": "3183d1656a094174938a7b667b0b3a20"
   }
 }

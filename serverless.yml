@@ -2,6 +2,7 @@ service: fossil-marketplace
 app: fossil-marketplace
 plugins:
   - serverless-dynamodb-local
+  - serverless-plugin-offline-dynamodb-stream
   - serverless-offline
 
 provider:
@@ -21,6 +22,10 @@ provider:
         - "dynamodb:BatchWriteItem"
         - "dynamodb:Query"
         - "dynamodb:Scan"
+        - "dynamodb:DescribeStream"
+        - "dynamodb:GetRecords"
+        - "dynamodb:GetShardIterator"
+        - "dynamodb:ListStreams"
       Resource:
         - Fn::GetAtt: [EventStore, Arn]
         - Fn::Join:
@@ -41,6 +46,15 @@ custom:
       heapInitial: 200m
       heapMax: 1g
       convertEmptyValues: true
+  dynamodbStream:
+    region: "#{AWS::Region}"
+    host: localhost
+    port: 8800
+    pollForever: true
+    streams:
+      - table: ${self:custom.eventStoreTableName}
+        functions:
+          - EventBus
 
 resources:
   - Resources:
@@ -51,6 +65,8 @@ resources:
           ProvisionedThroughput:
             ReadCapacityUnits: 1
             WriteCapacityUnits: 1
+          StreamSpecification:
+            StreamViewType: NEW_IMAGE
           AttributeDefinitions:
             - AttributeName: aggregateName
               AttributeType: S
@@ -99,6 +115,18 @@ functions:
           method: GET
           cors:
             <<: *cors-config
+  # INFRASTRUCTURE
+  EventBus:
+    handler: infrastructure/eventBus.stream
+    environment:
+      <<: *default-env
+    events:
+      - stream:
+          type: dynamodb
+          arn:
+            Fn::GetAtt: [EventStore, StreamArn]
+          startingPosition: LATEST
+  # COMMANDS
   CreateAccount:
     handler: controllers/account.createAccount
     environment:
@@ -147,5 +175,16 @@ functions:
       - http:
           path: undesire-item
           method: POST
+          cors:
+            <<: *cors-config
+  # PROJECTIONS
+  FossilCatalog:
+    handler: projections/index.fossilCatalog
+    environment:
+      <<: *default-env
+    events:
+      - http:
+          path: fossil-catalog
+          method: GET
           cors:
             <<: *cors-config

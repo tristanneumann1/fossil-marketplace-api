@@ -4,5 +4,10 @@
   "API_REGION": "us-east-1",
   "eventStore": "DynamoEventStore",
   "eventStoreTableName": "fossil-marketplace-event-store",
-  "eventStoreIndexName": "aggregate-by-id"
+  "eventStoreIndexName": "aggregate-by-id",
+  "redis": {
+    "host": "localhost",
+    "port": "6379",
+    "password": ""
+  }
 }

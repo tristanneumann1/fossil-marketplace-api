@@ -21,7 +21,7 @@ describe('Fossil', () => {
   });
   it('Ignores events of other Aggregates', async () => {
     // GIVEN
-    const event = new FMEvent(fossilAggregate.ITEM_WAS_LISTED, {}, {aggregateName: 'UnrelatedAggregate', aggregateId: 'itemId'});
+    const event = new FMEvent(Fossil.ITEM_WAS_LISTED, {}, {aggregateName: 'UnrelatedAggregate', aggregateId: 'itemId'});
     // WHEN
     await fossilAggregate._consumeEvent(event);
     // THEN

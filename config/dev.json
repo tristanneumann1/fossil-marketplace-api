@@ -4,5 +4,6 @@
     "convertEmptyValues": true,
     "region": "localhost",
     "endpoint": "http://localhost:8800"
-  }
+  },
+  "loggerLevel": "debug"
 }

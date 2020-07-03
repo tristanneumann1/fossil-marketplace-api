@@ -14,7 +14,7 @@ describe('account aggregate', () => {
         'user-token-2',
         'user-token-3',
       ];
-      const events = userTokens.map((userToken) => new FMEvent(account.ACCOUNT_WAS_CREATED, {}, {aggregateName: account.AGGREGATE_NAME, aggregateId: userToken}));
+      const events = userTokens.map((userToken) => new FMEvent(Account.ACCOUNT_WAS_CREATED, {}, {aggregateName: Account.AGGREGATE_NAME, aggregateId: userToken}));
       events.forEach((event) => eventStore.registerEvent(event));
       // WHEN
       await account.buildAggregate(eventStore);
@@ -50,7 +50,7 @@ describe('account aggregate', () => {
       await accountAggregate.createAccount(userToken, payload);
       // THEN
       const accountWasCreated = eventStore.getAllEvents().items[0];
-      expect(accountWasCreated.aggregateName).toBe(accountAggregate.AGGREGATE_NAME);
+      expect(accountWasCreated.aggregateName).toBe(Account.AGGREGATE_NAME);
       expect(accountWasCreated.aggregateId).toBe(userToken);
       expect(accountWasCreated.payload.email).toBe(email);
     });
@@ -83,7 +83,7 @@ describe('account aggregate', () => {
       await accountAggregate.createAccount(userToken, info);
       // THEN
       const accountWasCreated = eventStore.getAllEvents().items[0];
-      expect(accountWasCreated.aggregateName).toBe(accountAggregate.AGGREGATE_NAME);
+      expect(accountWasCreated.aggregateName).toBe(Account.AGGREGATE_NAME);
       expect(accountWasCreated.aggregateId).toBe(userToken);
       expect(accountWasCreated.payload.email).toBe(info.email);
       expect(accountWasCreated.payload.username).toBe(info.username);

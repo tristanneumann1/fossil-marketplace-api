@@ -1,6 +1,5 @@
 const config = require('config');
-const {httpHandler} = require('../utils').handler;
-const {CustomError} = require('../utils').Errors;
+const {handler: {httpHandler}, Errors: {CustomError}} = require('../utils');
 const {EventStore} = require('../entities/EventStore');
 const Account = require('../aggregates/Account');
 
