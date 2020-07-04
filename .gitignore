@@ -1,6 +1,7 @@
 # Distribution / packaging
 .Python
 env/
+config/production.json
 build/
 develop-eggs/
 dist/

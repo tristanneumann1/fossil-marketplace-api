@@ -2,6 +2,7 @@ const unmarshall = require('aws-sdk/clients/dynamodb').Converter.unmarshall;
 const logger = require('../utils').logger;
 const {FMEvent} = require('../entities/Events');
 const FossilCatalog = require('../projections/FossilCatalog');
+const createRedisClient = require('../clients/createRedisClient');
 
 async function _streamToSubscribers(dbEvent, subscribers) {
   dbEvent.Records.forEach((record) => {
@@ -20,8 +21,14 @@ async function _streamToSubscribers(dbEvent, subscribers) {
 }
 
 async function stream(event) {
-  const subscribers = [new FossilCatalog({projectionVersion: 'latest'})];
-  await _streamToSubscribers(event, subscribers);
+  try {
+    const client = await createRedisClient();
+    const subscribers = [new FossilCatalog({client, projectionVersion: 'latest'})];
+    await _streamToSubscribers(event, subscribers);
+  } catch(e) {
+    logger.error('eventBus stream: ' + e.message);
+    throw e;
+  }
 }
 
 module.exports = { stream, _streamToSubscribers };
