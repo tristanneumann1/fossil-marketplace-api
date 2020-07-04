@@ -4,7 +4,7 @@ app: fossil-marketplace
 
 plugins:
   - serverless-apigw-binary
-  # - serverless-domain-manager
+  - serverless-domain-manager
   - serverless-dynamodb-local
   - serverless-plugin-offline-dynamodb-stream
   - serverless-offline
@@ -38,17 +38,17 @@ provider:
               - '*'
 
 custom:
-  secrets: ${file(secrets.json)}
+  secrets: ${file(secrets.local.json)}
   eventStoreTableName: fossil-marketplace-event-store
   eventStoreIndexName: aggregate-by-id
   apigwBinary:
     types:
       - '*/*'
-  # customDomain:
-  #   domainName: ${self:custom.secrets.DOMAIN}
-  #   basePath: ''
-  #   stage: ${self:custom.secrets.NODE_ENV}
-  #   createRoute53Record: true
+  customDomain:
+    domainName: ${self:custom.secrets.DOMAIN}
+    basePath: ''
+    stage: ${self:provider.stage}
+    createRoute53Record: true
   dynamodb:
     stages:
       - dev
