@@ -5,7 +5,7 @@ async function fossilCatalog({ headers, queryStringParameters }) {
   if (!headers.userToken) {
     throw new CustomError('AccountId is required for this method', 400);
   }
-  const version = queryStringParameters.version || 'latest';
+  const version = queryStringParameters? queryStringParameters.version || 'latest' : 'latest';
   const projection = new FossilCatalog({projectionVersion: version});
   return await projection.result(headers.userToken);
 }

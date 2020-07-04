@@ -20,7 +20,7 @@ async function _streamToSubscribers(dbEvent, subscribers) {
 }
 
 async function stream(event) {
-  const subscribers = [new FossilCatalog()];
+  const subscribers = [new FossilCatalog({projectionVersion: 'latest'})];
   await _streamToSubscribers(event, subscribers);
 }
 

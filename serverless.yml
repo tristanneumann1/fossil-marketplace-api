@@ -63,8 +63,8 @@ resources:
         Properties:
           TableName: ${self:custom.eventStoreTableName}
           ProvisionedThroughput:
-            ReadCapacityUnits: 1
-            WriteCapacityUnits: 1
+            ReadCapacityUnits: 5
+            WriteCapacityUnits: 5
           StreamSpecification:
             StreamViewType: NEW_IMAGE
           AttributeDefinitions:
