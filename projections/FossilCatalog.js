@@ -4,7 +4,7 @@ const {logger} = require('../utils');
 class FossilCatalog {
   static PROJECTION_NAME = 'fossilCatalog';
   constructor({client, projectionVersion = null}) {
-    this.client = client
+    this.client = client;
     this.version = projectionVersion;
     this.versionInitialised = false;
   }
