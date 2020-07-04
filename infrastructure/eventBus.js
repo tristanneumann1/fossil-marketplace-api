@@ -6,7 +6,7 @@ const FossilCatalog = require('../projections/FossilCatalog');
 async function _streamToSubscribers(dbEvent, subscribers) {
   dbEvent.Records.forEach((record) => {
     const unmarshalledEvent = unmarshall(record.dynamodb.NewImage);
-    logger.debug(`infrastructure.eventBus._streamToSubscriber: ${unmarshalledEvent.id} for ${unmarshalledEvent.aggregateName} - ${unmarshalledEvent.aggregateId}`);
+    logger.info(`infrastructure.eventBus._streamToSubscriber: ${unmarshalledEvent.id} for ${unmarshalledEvent.aggregateName} - ${unmarshalledEvent.aggregateId}`);
     const meta = {
       aggregateId: unmarshalledEvent.aggregateId,
       aggregateName: unmarshalledEvent.aggregateName,

@@ -1,6 +1,6 @@
 const Fossil = require('../aggregates/Fossil');
 const config = require('config');
-const {handler: {httpHandler}, Errors: {CustomError}} = require('../utils');
+const {handler: {httpHandler}, Errors: {CustomError}, logger} = require('../utils');
 const {EventStore} = require('../entities/EventStore');
 
 async function listItem({headers, body}) {
@@ -10,6 +10,7 @@ async function listItem({headers, body}) {
   if(!body || !body.fossilId) {
     throw new CustomError('FossilId is required', 400);
   }
+  logger.info(`listItem -- userToken: ${headers.userToken} -- fossilId: ${body.fossilId}`);
   body.accountId = headers.userToken;
   const fossilAggregate = new Fossil();
   const eventStore = new EventStore(config.get('eventStoreTableName'));
@@ -24,6 +25,7 @@ async function unlistItem({headers, body}) {
   if(!body || !body.itemId || !body.fossilId) {
     throw new CustomError('ItemId and fossilId are required', 400);
   }
+  logger.info(`unlistItem -- userToken: ${headers.userToken} -- fossilId: ${body.fossilId}`);
   body.accountId = headers.userToken;
   const fossilAggregate = new Fossil();
   const eventStore = new EventStore(config.get('eventStoreTableName'));
@@ -38,6 +40,7 @@ async function desireItem({headers, body}) {
   if(!body || !body.fossilId) {
     throw new CustomError('FossilId is required', 400);
   }
+  logger.info(`desire -- userToken: ${headers.userToken} -- fossilId: ${body.fossilId}`);
   body.accountId = headers.userToken;
   const fossilAggregate = new Fossil();
   const eventStore = new EventStore(config.get('eventStoreTableName'));
@@ -52,6 +55,7 @@ async function undesireItem({headers, body}) {
   if(!body || !body.fossilId) {
     throw new CustomError('fossilId is required', 400);
   }
+  logger.info(`undesire -- userToken: ${headers.userToken} -- fossilId: ${body.fossilId}`);
   body.accountId = headers.userToken;
   const fossilAggregate = new Fossil();
   const eventStore = new EventStore(config.get('eventStoreTableName'));
