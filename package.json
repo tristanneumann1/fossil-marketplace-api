@@ -4,25 +4,29 @@
   "description": "A marketplace for your animal crossing fossils",
   "main": "index.js",
   "dependencies": {
-    "@nuxt/core": "^2.13.3",
-    "aws-sdk": "^2.696.0",
+    "@nuxt/http": "^0.5.7",
     "axios": "^0.19.2",
     "config": "^3.3.1",
     "express": "^4.17.1",
     "nuxt": "^2.13.3",
+    "nuxt-start": "^2.13.3",
     "redis": "^3.0.2",
-    "serverless": "^1.72.0",
     "serverless-apigw-binary": "^0.4.4",
     "serverless-http": "^2.5.0",
-    "uuid": "^8.1.0"
+    "uuid": "^8.1.0",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "@jest/types": "^26.0.1",
+    "@nuxt/core": "^2.13.3",
+    "@nuxtjs/vuetify": "^1.11.2",
+    "aws-sdk": "^2.696.0",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.2.0",
     "jest": "^26.0.1",
     "jest-localstorage-mock": "^2.4.2",
     "redis-mock": "^0.49.0",
+    "serverless": "^1.72.0",
     "serverless-domain-manager": "^4.1.1",
     "serverless-dynamodb-local": "^0.2.39",
     "serverless-offline": "^6.4.0",
@@ -31,11 +35,14 @@
     "util": "^0.12.3"
   },
   "scripts": {
-    "dev": "serverless offline start",
-    "nuxt": "nuxt",
-    "build": "nuxt build",
     "test": "jest . --coverage",
     "lint": "eslint .",
+    "nuxt": "nuxt -p 4000",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "start-server": "npm run build && node app.js",
+    "dev": "serverless offline start",
     "deploy": "nuxt build && serverless deploy --stage production"
   },
   "repository": {

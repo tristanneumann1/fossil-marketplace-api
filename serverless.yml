@@ -15,6 +15,7 @@ provider:
   versionFunctions: false
   stage: ${opt:stage, "dev"}
   region: us-east-1
+  cfnRole: arn:aws:iam::916585162511:role/CFNRole
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -202,7 +203,7 @@ functions:
       <<: *default-env
     events:
       - http:
-          path: fossil-catalog
+          path: /projection/fossil-catalog
           method: GET
           cors:
             <<: *cors-config

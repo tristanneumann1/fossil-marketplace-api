@@ -8,6 +8,9 @@
         <nuxt-link to="/dogs">Dogs</nuxt-link>
       </li>
       <li>
+        <nuxt-link to="/cats">Cats</nuxt-link>
+      </li>
+      <li>
         <nuxt-link to="/dogs/shepherd">Only Shepherds</nuxt-link>
       </li>
     </ul>
