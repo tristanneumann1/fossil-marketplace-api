@@ -5,7 +5,7 @@ module.exports = {
     title: 'Fossil Marketplace',
     link: [
       { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900' },
-      { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css' },
+      { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css' },
     ],
     meta: [
       { charset: 'utf-8' },
@@ -16,11 +16,17 @@ module.exports = {
 
   srcDir: 'client/',
 
-  modules: ['@nuxt/http'],
+  modules: [
+    '@nuxt/http',
+    'nuxt-material-design-icons-iconfont'
+  ],
   buildModules: [
     [
       '@nuxtjs/vuetify', 
       {
+        icons: {
+          iconfont: 'mdi',
+        },
         theme: {
           themes: {
             light: {

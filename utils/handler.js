@@ -6,6 +6,7 @@ function httpHandler(functionToRun, parseBody = false) {
     if (event === null || event === undefined) {
       event = {};
     }
+    logger.info('[HTTP-HANDLER] Making a request with: ' + JSON.stringify(event) );
     const params = {
       queryStringParameters: event.queryStringParameters,
       headers: event.headers,

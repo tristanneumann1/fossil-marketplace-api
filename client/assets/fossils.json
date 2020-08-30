@@ -1,0 +1,370 @@
+[
+  {
+    "fossilId": "Ankylo_skull",
+    "parent": "Ankylosaurus",
+    "sellPrice": 3500
+  },
+  {
+    "fossilId": "Ankylo_tail",
+    "parent": "Ankylosaurus",
+    "sellPrice": 2500
+  },
+  {
+    "fossilId": "Ankylo_torso",
+    "parent": "Ankylosaurus",
+    "sellPrice": 3000
+  },
+
+  {
+    "fossilId": "Archelon_skull",
+    "parent": "Archelon",
+    "sellPrice": 4000
+  },
+  {
+    "fossilId": "Archelon_tail",
+    "parent": "Archelon",
+    "sellPrice": 3500
+  },
+
+  {
+    "fossilId": "Brachio_skull",
+    "parent": "Brachiosaurus",
+    "sellPrice": 6000
+  },
+  {
+    "fossilId": "Brachio_torso",
+    "parent": "Brachiosaurus"
+  },
+  {
+    "fossilId": "Brachio_tail",
+    "parent": "Brachiosaurus",
+    "sellPrice": 5500
+  },
+  {
+    "fossilId": "Brachio_pelvis",
+    "parent": "Brachiosaurus"
+  },
+
+  {
+    "fossilId": "Deinony_tail",
+    "parent": "Deinonychus",
+    "sellPrice": 2500
+  },
+  {
+    "fossilId": "Deinony_torso",
+    "parent": "Deinonychus"
+  },
+
+  {
+    "fossilId": "Dimetrodon_skull",
+    "parent": "Dimetrodon",
+    "sellPrice": 5500
+  },
+  {
+    "fossilId": "Dimetrodon_torso",
+    "parent": "Dimetrodon",
+    "sellPrice": 5000
+  },
+
+  {
+    "fossilId": "Diplo_chest",
+    "parent": "Diplodocus",
+    "sellPrice": 4500
+  },
+  {
+    "fossilId": "Diplo_neck",
+    "parent": "Diplodocus",
+    "sellPrice": 5000
+  },
+  {
+    "fossilId": "Diplo_pelvis",
+    "parent": "Diplodocus",
+    "sellPrice": 4000
+  },
+  {
+    "fossilId": "Diplo_skull",
+    "parent": "Diplodocus",
+    "sellPrice": 5000
+  },
+  {
+    "fossilId": "Diplo_tail",
+    "parent": "Diplodocus",
+    "sellPrice": 4500
+  },
+  {
+    "fossilId": "Diplo_tailtip",
+    "parent": "Diplodocus",
+    "sellPrice": 4000
+  },
+
+  {
+    "fossilId": "Iguanodon_skull",
+    "parent": "Iguanodon",
+    "sellPrice": 4000
+  },
+  {
+    "fossilId": "Iguanodon_tail",
+    "parent": "Iguanodon",
+    "sellPrice": 3000
+  },
+  {
+    "fossilId": "Iguanodon_torso",
+    "parent": "Iguanodon",
+    "sellPrice": 3500
+  },
+  
+  {
+    "fossilId": "Mammoth_skull",
+    "parent": "Mammoth",
+    "sellPrice": 3000
+  },
+  {
+    "fossilId": "Mammoth_torso",
+    "parent": "Mammoth",
+    "sellPrice": 2500
+  },
+  
+  {
+    "fossilId": "Megacero_skull",
+    "parent": "Megacerops",
+    "sellPrice": 4500
+  },
+  {
+    "fossilId": "Megacero_tail",
+    "parent": "Megacerops",
+    "sellPrice": 3000
+  },
+  {
+    "fossilId": "Megacero_torso",
+    "parent": "Megacerops",
+    "sellPrice": 3500
+  },
+  
+  {
+    "fossilId": "Megalo_leftSide",
+    "parent": "Megaloceros",
+    "sellPrice": 4000
+  },
+  {
+    "fossilId": "Megaolo_rightSide",
+    "parent": "Megaloceros",
+    "sellPrice": 5500
+  },
+
+  {
+    "fossilId": "Ophthalmo_skull",
+    "parent": "Ophthalmosaurus"
+  },
+  {
+    "fossilId": "Ophthalmo_torso",
+    "parent": "Ophthalmosaurus"
+  },
+  
+  {
+    "fossilId": "Pachysaurus_skull",
+    "parent": "Pachycephalosaurus",
+    "sellPrice": 4000
+  },
+  {
+    "fossilId": "Pachysaurus_tail",
+    "parent": "Pachycephalosaurus",
+    "sellPrice": 3000
+  },
+
+  {
+    "fossilId": "Parasaur_skull",
+    "parent": "Parasaurolophus",
+    "sellPrice": 3500
+  },
+  {
+    "fossilId": "Parasaur_tail",
+    "parent": "Parasaurolophus",
+    "sellPrice": 2500
+  },
+  {
+    "fossilId": "Parasaur_torso",
+    "parent": "Parasaurolophus",
+    "sellPrice": 3500
+  },
+
+  {
+    "fossilId": "Plesio_body",
+    "parent": "Plesiosaur",
+    "sellPrice": 4500
+  },
+  {
+    "fossilId": "Plesio_skull",
+    "parent": "Plesiosaur",
+    "sellPrice": 4500
+  },
+  {
+    "fossilId": "Plesio_tail",
+    "parent": "Plesiosaur"
+  },
+
+  {
+    "fossilId": "Ptera_body",
+    "parent": "Pteranodon",
+    "sellPrice": 4000
+  },
+  {
+    "fossilId": "Ptera_leftWing",
+    "parent": "Pteranodon",
+    "sellPrice": 4500
+  },
+  {
+    "fossilId": "Ptera_rightWing",
+    "parent": "Pteranodon",
+    "sellPrice": 4500
+  },
+
+  {
+    "fossilId": "Quetzal_leftWing",
+    "parent": "Quetzalcoatlus"
+  },
+  {
+    "fossilId": "Quetzal_rightWing",
+    "parent": "Quetzalcoatlus",
+    "sellPrice": 5000
+  },
+  {
+    "fossilId": "Quetzal_torso",
+    "parent": "Quetzalcoatlus"
+  },
+  
+  {
+    "fossilId": "Sabertooth_skull",
+    "parent": "Sabertooth Tiger",
+    "sellPrice": 2500
+  },
+  {
+    "fossilId": "Sabertooth_tail",
+    "parent": "Sabertooth Tiger",
+    "sellPrice": 2000
+  },
+  
+  {
+    "fossilId": "Stego_skull",
+    "parent": "Stegosaurus",
+    "sellPrice": 5000
+  },
+  {
+    "fossilId": "Stego_tail",
+    "parent": "Stegosaurus",
+    "sellPrice": 4000
+  },
+  {
+    "fossilId": "Stego_torso",
+    "parent": "Stegosaurus",
+    "sellPrice": 4500
+  },
+  
+  {
+    "fossilId": "Spino_skull",
+    "parent": "Spinosaurus",
+    "sellPrice": 4000
+  },
+  {
+    "fossilId": "Spino_tail",
+    "parent": "Spinosaurus",
+    "sellPrice": 4000
+  },
+  {
+    "fossilId": "Spino_torso",
+    "parent": "Spinosaurus",
+    "sellPrice": 5000
+  },
+  
+  {
+    "fossilId": "Tricera_skull",
+    "parent": "Triceratops",
+    "sellPrice": 5500
+  },
+  {
+    "fossilId": "Tricera_tail",
+    "parent": "Triceratops",
+    "sellPrice": 4500
+  },
+  {
+    "fossilId": "Tricera_torso",
+    "parent": "Triceratops",
+    "sellPrice": 5000
+  },
+  
+  {
+    "fossilId": "TRex_skull",
+    "parent": "Tyrannosaurus Rex",
+    "sellPrice": 6000
+  },
+  {
+    "fossilId": "TRex_tail",
+    "parent": "Tyrannosaurus Rex",
+    "sellPrice": 5000
+  },
+  {
+    "fossilId": "TRex_torso",
+    "parent": "Tyrannosaurus Rex",
+    "sellPrice": 5500
+  },
+
+  {
+    "fossilId": "Acanthostega"
+  },
+
+  {
+    "fossilId": "Amber",
+    "sellPrice": 1200
+  },
+
+  {
+    "fossilId": "Ammonite",
+    "sellPrice": 1100
+  },
+
+  {
+    "fossilId": "Anomalocaris"
+  },
+
+  {
+    "fossilId": "Archaeopteryx",
+    "sellPrice": 1300
+  },
+
+  {
+    "fossilId": "Australopithecus"
+  },
+
+  {
+    "fossilId": "Coprolite",
+    "sellPrice": 1100
+  },
+
+  {
+    "fossilId": "Dinosaur_Track",
+    "sellPrice": 1000
+  },
+
+  {
+    "fossilId": "Dunkleosteus"
+  },
+
+  {
+    "fossilId": "Eusthenopteron"
+  },
+
+  {
+    "fossilId": "Juramaia"
+  },
+  
+  {
+    "fossilId": "Myllokunmingia"
+  },
+  
+  {
+    "fossilId": "Shark-Tooth_Pattern"
+  },
+  
+  {
+    "fossilId": "Trilobite"
+  }
+]

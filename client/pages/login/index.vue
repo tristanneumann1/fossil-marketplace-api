@@ -29,6 +29,7 @@
               <v-text-field
                 label="Login"
                 name="login"
+                :value="accountId"
                 prepend-icon="mdi-account"
                 type="text"
               ></v-text-field>
@@ -54,7 +55,15 @@
 
 <script>
 export default {
-  name: 'login'
+  name: 'login',
+  data: () => ({
+    accountId: '',
+  }),
+  methods: {
+    register() {
+      this.$store.dispatch('register', {accountId: this.accountId, router: this.$router});
+    }
+  }
 }
 </script>
 

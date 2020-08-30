@@ -4,13 +4,15 @@
       app
       color="primary"
       dark
+      dense
+      flat
     >
       <div class="d-flex align-center">
         <v-img
           alt="fossil-logo"
           class="shrink mr-2"
           contain
-          :src="require('./120px-Identified_Fossil_NH_Icon.png')"
+          :src="require('../assets/120px-Identified_Fossil_NH_Icon.png')"
           transition="scale-transition"
           width="40"
         />
@@ -20,9 +22,9 @@
       <v-spacer></v-spacer>
 
       <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
+        to="/login"
         text
+        nuxt
       > Sign In </v-btn>
     </v-app-bar>
 
@@ -36,13 +38,11 @@
 
 export default {
   name: 'App',
-
-  data: () => ({
-    //
-  }),
 };
 </script>
 
 <style lang="sass">
-  @import '~vuetify/src/styles/styles.sass'
+@import '~vuetify/src/styles/styles.sass'
+html
+  overflow-y: auto
 </style>
