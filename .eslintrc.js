@@ -8,6 +8,7 @@ module.exports = {
     'WebSocket': true,
     'localStorage': true,
   },
+  'ignorePatterns': ['.nuxt/**', 'dist/**'],
   'rules': {
     'semi': 2,
     'indent': ['error', 2],

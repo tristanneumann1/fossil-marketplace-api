@@ -1,5 +1,4 @@
-import ApiClient from './apiClient'; 
-import Axios from 'axios';
+import ApiClient from './apiClient';
 
 export function state() {
   return {
@@ -14,9 +13,9 @@ export const mutations = {
 };
 
 export const actions = {
-  // async register({ commit }, { accountId }) {
-  //   const client = new ApiClient(accountId);
-  //   const response = await axios.post(
+  // async register({ state, commit }, { accountId }) {
+  //   const client = new ApiClient(state.accountId);
+  //   const response = await .post(
   //     '/create-account',
   //     { email: accountId + '@example.com' },
   //     {

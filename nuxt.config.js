@@ -18,7 +18,7 @@ module.exports = {
 
   modules: [
     '@nuxt/http',
-    'nuxt-material-design-icons-iconfont'
+    'nuxt-material-design-icons-iconfont',
   ],
   buildModules: [
     [
