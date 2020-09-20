@@ -1,17 +1,31 @@
 const {CustomError} = require('./Errors');
 const logger = require('./logger');
 
+function decryptBody(body, parseBody, decryptBody) {
+  if (!body) {
+    return null;
+  }
+  if (decryptBody) {
+    body = (new Buffer(body, 'base64')).toString('ascii');
+  }
+  if (parseBody) {
+    body = JSON.parse(body);
+  }
+  return body;
+}
+
 function httpHandler(functionToRun, parseBody = false) {
   return async function handler(event) {
     if (event === null || event === undefined) {
       event = {};
     }
     logger.info('[HTTP-HANDLER] Making a request with: ' + JSON.stringify(event) );
+    const body = decryptBody(event.body, parseBody, event.isBase64Encoded);
     const params = {
       queryStringParameters: event.queryStringParameters,
       headers: event.headers,
       pathParameters: event.pathParameters,
-      body: (parseBody && event.body)? JSON.parse(event.body) : event.body,
+      body,
     };
     try {
       const result = await functionToRun(params);
