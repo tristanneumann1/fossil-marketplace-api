@@ -22,10 +22,10 @@
       <v-spacer></v-spacer>
 
       <v-btn
-        to="/login"
+        to="/sign-up"
         text
         nuxt
-      > Sign In </v-btn>
+      > Sign Up </v-btn>
     </v-app-bar>
 
     <v-main>

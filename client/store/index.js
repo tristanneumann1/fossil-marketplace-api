@@ -13,19 +13,11 @@ export const mutations = {
 };
 
 export const actions = {
-  // async register({ state, commit }, { accountId }) {
-  //   const client = new ApiClient(state.accountId);
-  //   const response = await .post(
-  //     '/create-account',
-  //     { email: accountId + '@example.com' },
-  //     {
-  //       headers: { userToken: accountId },
-  //     },
-  //   );
-  //   if (response) {
-  //     commit('SET_ACCOUNT_ID', accountId);
-  //   }
-  // },
+  async register({ commit }, { accountId }) {
+    const client = new ApiClient(accountId);
+    client.createAccount({ accountId, email: accountId + '@example.com' });
+    commit('SET_ACCOUNT_ID', accountId);
+  },
   async listItem({ state }, { fossilId }) {
     const client = new ApiClient(state.accountId);
     return await client.listItem(fossilId);

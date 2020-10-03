@@ -5,7 +5,12 @@ module.exports = {
   moduleFileExtensions: [
     'js',
     'json',
+    'vue',
   ],
+  transform: {
+    '^.+\\.vue$': 'vue-jest',
+    '.*\\.(js)$': 'babel-jest',
+  },
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
     '\\.(svg)$': '<rootDir>/test/__mocks__/fileMock.js',
@@ -13,6 +18,7 @@ module.exports = {
   coverageDirectory: '<rootDir>/test/unit/coverage',
   collectCoverageFrom: [
     '**/*.js',
+    '**/*.vue',
     '!**/node_modules/**',
     '!**/test/**',
     '!**/utils/**',
