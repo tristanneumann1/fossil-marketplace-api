@@ -3,7 +3,7 @@ const logger = require('./logger');
 
 function decryptBody(body, parseBody, decryptBody) {
   if (!body) {
-    return {};
+    return null;
   }
   if (decryptBody) {
     body = (new Buffer(body, 'base64')).toString('ascii');

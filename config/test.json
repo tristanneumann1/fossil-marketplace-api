@@ -1,5 +1,6 @@
 {
   "eventStore": "LocalEventStore",
+  "loggerLevel": "error",
   "dynamoParams": {
     "convertEmptyValues": true,
     "region": "localhost",

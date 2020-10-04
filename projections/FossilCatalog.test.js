@@ -1,12 +1,13 @@
 const FossilCatalog = require('./fossilCatalog');
 const {FMEvent} = require('../entities/Events');
 const Fossil = require('../aggregates/Fossil');
+const createRedisClient = require('../clients/createRedisClient');
 const redis = require('redis-mock');
 
 describe('Fossil catalog', () => {
   let client;
-  beforeEach(() => {
-    client = redis.createClient();
+  beforeEach(async () => {
+    client = await createRedisClient(redis);
   });
   afterEach(() => {
     client.quit();
@@ -67,7 +68,7 @@ describe('Fossil catalog', () => {
     const projectionVersion = 'testVersion';
     // WHEN
     const fossilCatalog = new FossilCatalog({client});
-    await fossilCatalog.initialiseVerion(projectionVersion);
+    await fossilCatalog.initialiseVersion(projectionVersion);
     // THEN
     expect(fossilCatalog._getPrefix()).toBe(FossilCatalog.PROJECTION_NAME + '.' + projectionVersion);
   });

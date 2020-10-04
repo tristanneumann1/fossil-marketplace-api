@@ -62,10 +62,5 @@
   "bugs": {
     "url": "https://github.com/tristanneumann1/fossil-marketplace-api/issues"
   },
-  "homepage": "https://github.com/tristanneumann1/fossil-marketplace-api#readme",
-  "jest": {
-    "setupFiles": [
-      "jest-localstorage-mock"
-    ]
-  }
+  "homepage": "https://github.com/tristanneumann1/fossil-marketplace-api#readme"
 }
