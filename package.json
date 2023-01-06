@@ -39,7 +39,7 @@
     "serverless-plugin-offline-dynamodb-stream": "^1.0.19",
     "sinon": "^9.0.2",
     "util": "^0.12.3",
-    "vue-jest": "^3.0.7"
+    "vue-jest": "^4.0.1"
   },
   "scripts": {
     "test": "jest . --coverage",
