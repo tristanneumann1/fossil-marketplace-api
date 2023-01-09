@@ -35,7 +35,7 @@
     "serverless": "^1.72.0",
     "serverless-domain-manager": "^4.1.1",
     "serverless-dynamodb-local": "^0.2.39",
-    "serverless-offline": "^6.4.0",
+    "serverless-offline": "^12.0.4",
     "serverless-plugin-offline-dynamodb-stream": "^1.0.19",
     "sinon": "^9.0.2",
     "util": "^0.12.3",
